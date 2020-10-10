@@ -1,0 +1,6 @@
+#Binaries
+tg-random-bot
+
+#config file
+config.toml
+.idea/
