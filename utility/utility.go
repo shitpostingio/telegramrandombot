@@ -9,10 +9,9 @@ import (
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
-	limiter "gitlab.com/shitposting/tg-random-bot/ratelimiter"
+	limiter "github.com/shitpostingio/telegramrandombot/ratelimiter"
 
-	memesapi "gitlab.com/shitposting/memesapi/rest/client"
-	"gitlab.com/shitposting/telegram-markdown-processor/telegramCaption"
+	memesapi "github.com/shitpostingio/randomapi/rest/client"
 )
 
 const (
@@ -42,21 +41,21 @@ func TrySending(recent bool, chatID int64, userid int, client *memesapi.Client, 
 		case "image":
 			bot.Send(tgbotapi.NewChatAction(chatID, "upload_photo"))
 			photoConfig := createPhotoConfig(resp.Meme.URL, chatID)
-			photoConfig.Caption = fmt.Sprintf("%s\n\n🔎 source: t.me/shitpost/%d", telegramCaption.PrepareCaptionToSend(resp.Meme.Caption, ""), resp.Meme.MessageID)
+			photoConfig.Caption = fmt.Sprintf("%s\n\n🔎 source: t.me/shitpost/%d", resp.Meme.Caption, resp.Meme.MessageID)
 			photoConfig.ParseMode = "HTML"
 			_, _, err = limiter.Send(photoConfig)
 		case "video":
 			bot.Send(tgbotapi.NewChatAction(chatID, "upload_video"))
 
 			videoConfig := createVideoConfig(resp.Meme.URL, chatID)
-			videoConfig.Caption = fmt.Sprintf("%s\n\n🔎 source: t.me/shitpost/%d", telegramCaption.PrepareCaptionToSend(resp.Meme.Caption, ""), resp.Meme.MessageID)
+			videoConfig.Caption = fmt.Sprintf("%s\n\n🔎 source: t.me/shitpost/%d", resp.Meme.Caption, resp.Meme.MessageID)
 			videoConfig.ParseMode = "HTML"
 			_, _, err = limiter.Send(videoConfig)
 		default:
 			bot.Send(tgbotapi.NewChatAction(chatID, "upload_video"))
 
 			animationConfig := createAnimationConfig(resp.Meme.URL, chatID)
-			animationConfig.Caption = fmt.Sprintf("%s\n\n🔎 source: t.me/shitpost/%d", telegramCaption.PrepareCaptionToSend(resp.Meme.Caption, ""), resp.Meme.MessageID)
+			animationConfig.Caption = fmt.Sprintf("%s\n\n🔎 source: t.me/shitpost/%d", resp.Meme.Caption, resp.Meme.MessageID)
 			animationConfig.ParseMode = "HTML"
 			_, _, err = limiter.Send(animationConfig)
 		}
