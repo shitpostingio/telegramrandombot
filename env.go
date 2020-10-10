@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	memesapi "gitlab.com/shitposting/memesapi/rest/client"
+	memesapi "github.com/shitpostingio/randomapi/rest/client"
 )
 
 var (

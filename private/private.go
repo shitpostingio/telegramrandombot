@@ -1,15 +1,15 @@
 package private
 
 import (
+	"log"
 	"strings"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	"gitlab.com/shitposting/loglog-ng"
 
-	limiter "gitlab.com/shitposting/tg-random-bot/ratelimiter"
-	"gitlab.com/shitposting/tg-random-bot/utility"
+	limiter "github.com/shitpostingio/telegramrandombot/ratelimiter"
+	"github.com/shitpostingio/telegramrandombot/utility"
 
-	memesapi "gitlab.com/shitposting/memesapi/rest/client"
+	memesapi "github.com/shitpostingio/randomapi/rest/client"
 )
 
 const welcomeMessage = "Tap the buttons to get a recent or a random meme from @shitpost\n\nUse /start or /help if it disappears"
@@ -50,7 +50,7 @@ func handleStart(message *tgbotapi.Message) {
 	msg := tgbotapi.NewMessage(message.Chat.ID, welcomeMessage)
 	msg.ReplyMarkup = keyboard
 	if _, _, err := limiter.Send(msg); err != nil {
-		loglog.Err(err.Error())
+		log.Print(err.Error())
 	}
 }
 

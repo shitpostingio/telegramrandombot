@@ -1,18 +1,16 @@
 package groups
 
 import (
-	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
 
-	"gitlab.com/shitposting/loglog-ng"
-
-	limiter "gitlab.com/shitposting/tg-random-bot/ratelimiter"
-	"gitlab.com/shitposting/tg-random-bot/utility"
+	limiter "github.com/shitpostingio/telegramrandombot/ratelimiter"
+	"github.com/shitpostingio/telegramrandombot/utility"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
-	memesapi "gitlab.com/shitposting/memesapi/rest/client"
+	memesapi "github.com/shitpostingio/randomapi/rest/client"
 
 	"github.com/patrickmn/go-cache"
 )
@@ -53,13 +51,13 @@ func authorizeMeme(recent bool, message *tgbotapi.Message, client *memesapi.Clie
 	if !found {
 		err := requests.Add(groupKey, uint(0), groupRoutineLifespan)
 		if err != nil {
-			loglog.Warn(fmt.Sprintf("Unable to add group with ID %s to the request cache", groupKey))
+			log.Printf("Unable to add group with ID %s to the request cache", groupKey)
 		}
 	}
 
 	groupRequests, err := requests.IncrementUint(groupKey, 1)
 	if err != nil {
-		loglog.Warn(fmt.Sprintf("Unable to increment request count for group with ID %s", groupKey))
+		log.Printf("Unable to increment request count for group with ID %s", groupKey)
 	}
 
 	if groupRequests > maxGroupRequestsPerMinute {
@@ -79,10 +77,10 @@ func sendMemeToGroup(recent bool, message *tgbotapi.Message, client *memesapi.Cl
 }
 
 func askToSlowDown(message *tgbotapi.Message) {
-	loglog.Warn(fmt.Sprintf(groupSlowDownReport, message.Chat.Title, message.Chat.UserName, message.Chat.ID, maxGroupRequestsPerMinute))
+	log.Printf(groupSlowDownReport, message.Chat.Title, message.Chat.UserName, message.Chat.ID, maxGroupRequestsPerMinute)
 
 	_, _, err := limiter.Send(tgbotapi.NewMessage(message.Chat.ID, pleaseSlowDownMessage))
 	if err != nil {
-		loglog.Err(fmt.Sprintf("Unable to send slow down message to group with ID %d", message.Chat.ID))
+		log.Printf("Unable to send slow down message to group with ID %d", message.Chat.ID)
 	}
 }

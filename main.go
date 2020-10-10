@@ -5,14 +5,14 @@ import (
 	"log"
 	"strconv"
 
-	memesapi "gitlab.com/shitposting/memesapi/rest/client"
+	memesapi "github.com/shitpostingio/randomapi/rest/client"
 
-	limiter "gitlab.com/shitposting/tg-random-bot/ratelimiter"
+	limiter "github.com/shitpostingio/telegramrandombot/ratelimiter"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
-	"gitlab.com/shitposting/tg-random-bot/groups"
-	"gitlab.com/shitposting/tg-random-bot/private"
+	"github.com/shitpostingio/telegramrandombot/groups"
+	"github.com/shitpostingio/telegramrandombot/private"
 )
 
 var (
