@@ -3,9 +3,7 @@ package utility
 import (
 	"fmt"
 	"log"
-	"strconv"
 	"strings"
-	"time"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 
@@ -24,39 +22,33 @@ const (
 func TrySending(recent bool, chatID int64, userid int, client *memesapi.Client, bot *tgbotapi.BotAPI) {
 
 	var err error
-	var startDate string
 
-	if recent {
-		startDate = strconv.FormatInt(time.Now().AddDate(0, 0, -14).Unix(), 10)
-	}
+	// if recent {
+	// 	startDate = strconv.FormatInt(time.Now().AddDate(0, 0, -14).Unix(), 10)
+	// }
 
 	for i := 0; i < MaxRetries; i++ {
 
-		resp, err := client.Random("", startDate, "", strconv.Itoa(userid))
+		var typed memesapi.MediaType
+		resp, err := client.Random(typed)
 		if err != nil {
 			log.Println(err)
 		}
 
-		switch resp.Meme.Type {
-		case "image":
+		switch resp.Post.Type {
+		case "photo":
 			bot.Send(tgbotapi.NewChatAction(chatID, "upload_photo"))
-			photoConfig := createPhotoConfig(resp.Meme.URL, chatID)
-			photoConfig.Caption = fmt.Sprintf("%s\n\n🔎 source: t.me/shitpost/%d", resp.Meme.Caption, resp.Meme.MessageID)
-			photoConfig.ParseMode = "HTML"
+			photoConfig := createPhotoConfig(resp.Post.URL, chatID)
 			_, _, err = limiter.Send(photoConfig)
 		case "video":
 			bot.Send(tgbotapi.NewChatAction(chatID, "upload_video"))
 
-			videoConfig := createVideoConfig(resp.Meme.URL, chatID)
-			videoConfig.Caption = fmt.Sprintf("%s\n\n🔎 source: t.me/shitpost/%d", resp.Meme.Caption, resp.Meme.MessageID)
-			videoConfig.ParseMode = "HTML"
+			videoConfig := createVideoConfig(resp.Post.URL, chatID)
 			_, _, err = limiter.Send(videoConfig)
 		default:
 			bot.Send(tgbotapi.NewChatAction(chatID, "upload_video"))
 
-			animationConfig := createAnimationConfig(resp.Meme.URL, chatID)
-			animationConfig.Caption = fmt.Sprintf("%s\n\n🔎 source: t.me/shitpost/%d", resp.Meme.Caption, resp.Meme.MessageID)
-			animationConfig.ParseMode = "HTML"
+			animationConfig := createAnimationConfig(resp.Post.URL, chatID)
 			_, _, err = limiter.Send(animationConfig)
 		}
 
